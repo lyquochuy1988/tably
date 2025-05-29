@@ -1,0 +1,9 @@
+{
+  "scripts": {
+    "minify": "terser src/tably.js -o tably.min.js && csso src/tably.css -o tably.min.css"
+  },
+  "dependencies": {
+    "csso-cli": "^4.0.2",
+    "terser": "^5.39.0"
+  }
+}
