@@ -23,23 +23,25 @@ function Tably(selector) {
 
     if (this.tabs.length !== this.panels.length) return;
 
+    this._originalHTML = this.container.innerHTML;
+
     this._init();
 }
 
-Tably.prototype._init = function() {
-    const activeTab = this.tabs[0];
-    activeTab.closest("li").classList.add("tably--active");
+Tably.prototype._init = function() {   
+    this._activeTab(this.tabs[0]);
 
     this.tabs.forEach(tab => {
         tab.onclick = (event) => this._handleClickTab(event, tab);
     })
-
-    this.panels.forEach(panel => panel.hidden = true);
-    const activePanel = this.panels[0];
-    activePanel.hidden = false;
 }
 
 Tably.prototype._handleClickTab = function(event, tab) {
+    event.preventDefault();
+    this._activeTab(tab);
+}
+
+Tably.prototype._activeTab = function(tab) {
     this.tabs.forEach(tab => {
         tab.closest("li").classList.remove("tably--active");
     });
@@ -49,4 +51,34 @@ Tably.prototype._handleClickTab = function(event, tab) {
     this.panels.forEach(panel => panel.hidden = true);
     const activePanel = document.querySelector(tab.getAttribute("href"));
     activePanel.hidden = false;
+}
+
+Tably.prototype.switch = function(input) {
+    let tabToActive = null;
+    if (typeof input === 'string') {
+        tabToActive = this.tabs.find(tab => tab.getAttribute("href") === input);  
+
+        if (!tabToActive) {
+            console.error(`Not found tab from input: ${input}`);
+            return;
+        }
+    } else if (this.tabs.includes(input)) {
+        tabToActive = input;
+    }
+
+    if (!tabToActive) {
+        console.error(`Not found tab from ${input}`);
+        return;
+    }
+
+    this._activeTab(tabToActive);
+}
+
+Tably.prototype.destroy = function() {
+    this.container.innerHTML = this._originalHTML;
+    this.panels.forEach(panel => panel.hidden = false);
+
+    this.container = null;
+    this.tabs = null;
+    this.panels = null;
 }
