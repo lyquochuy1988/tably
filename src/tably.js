@@ -29,7 +29,15 @@ function Tably(selector) {
 }
 
 Tably.prototype._init = function() {   
-    this._activeTab(this.tabs[0]);
+    let tabToActivate = null;
+    const savedTab = localStorage.getItem("tably-active");
+    if (savedTab) {
+        tabToActivate = this.tabs.find(tab => tab.getAttribute("href") === savedTab);
+    } else {
+        tabToActivate = this.tabs[0];
+    }
+
+    this._activateTab(tabToActivate)
 
     this.tabs.forEach(tab => {
         tab.onclick = (event) => this._handleClickTab(event, tab);
@@ -38,10 +46,10 @@ Tably.prototype._init = function() {
 
 Tably.prototype._handleClickTab = function(event, tab) {
     event.preventDefault();
-    this._activeTab(tab);
+    this._activateTab(tab);
 }
 
-Tably.prototype._activeTab = function(tab) {
+Tably.prototype._activateTab = function(tab) {
     this.tabs.forEach(tab => {
         tab.closest("li").classList.remove("tably--active");
     });
@@ -51,27 +59,29 @@ Tably.prototype._activeTab = function(tab) {
     this.panels.forEach(panel => panel.hidden = true);
     const activePanel = document.querySelector(tab.getAttribute("href"));
     activePanel.hidden = false;
+
+    localStorage.setItem("tably-active", tab.getAttribute("href"));
 }
 
 Tably.prototype.switch = function(input) {
-    let tabToActive = null;
+    let tabToActivate = null;
     if (typeof input === 'string') {
-        tabToActive = this.tabs.find(tab => tab.getAttribute("href") === input);  
+        tabToActivate = this.tabs.find(tab => tab.getAttribute("href") === input);  
 
-        if (!tabToActive) {
+        if (!tabToActivate) {
             console.error(`Not found tab from input: ${input}`);
             return;
         }
     } else if (this.tabs.includes(input)) {
-        tabToActive = input;
+        tabToActivate = input;
     }
 
-    if (!tabToActive) {
+    if (!tabToActivate) {
         console.error(`Not found tab from ${input}`);
         return;
     }
 
-    this._activeTab(tabToActive);
+    this._activateTab(tabToActivate);
 }
 
 Tably.prototype.destroy = function() {
