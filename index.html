@@ -28,7 +28,9 @@
 
     <script src="./src/tably.js"></script>
     <script>
-        const tabs1 = new Tably("#tabs1");
+        const tabs1 = new Tably("#tabs1", {
+            remember: true,
+        });
 
         // tabs1.switch("#tab3");        
         // tabElement : <a href="#tab2">
