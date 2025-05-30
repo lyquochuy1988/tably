@@ -33,8 +33,10 @@ function Tably(selector, options = {}) {
 }
 
 Tably.prototype._init = function() {   
-    const hash = location.hash;
-    const tabToActivate = (this.opt.remember && hash && this.tabs.find(tab => tab.getAttribute("href") === hash)) || this.tabs[0];
+    const params = new URLSearchParams(location.search);
+    const tabSelector = params.get("tab");
+
+    const tabToActivate = (this.opt.remember && tabSelector && this.tabs.find(tab => tab.getAttribute("href") === tabSelector)) || this.tabs[0];
     this._activateTab(tabToActivate)
 
     this.tabs.forEach(tab => {
@@ -59,7 +61,7 @@ Tably.prototype._activateTab = function(tab) {
     activePanel.hidden = false;
 
     if (this.opt.remember) {
-        history.replaceState(null, null, tab.getAttribute("href"));
+        history.replaceState(null, null, `?tab=${encodeURIComponent(tab.getAttribute("href"))}`);
     }
 }
 
