@@ -25,6 +25,7 @@ function Tably(selector, options = {}) {
 
     this.opt = Object.assign({
         remember: false,
+        onChange: null,
     }, options);
 
     this.paramKey = selector.replace(/[^a-zA-Z0-9]/g, '');;
@@ -69,6 +70,13 @@ Tably.prototype._activateTab = function(tab) {
         params.set(this.paramKey, paramValue);
 
         history.replaceState(null, null, `?${params}`);
+    }
+
+    if (typeof this.opt.onChange === 'function') {
+        this.opt.onChange({
+            tab,
+            panel: activePanel
+        });
     }
 }
 

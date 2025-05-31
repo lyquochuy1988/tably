@@ -43,6 +43,9 @@
     <script>
         const tabs1 = new Tably("#tabs1", {
             remember: true,
+            onChange: (data) => {
+                console.log(data); // data is obj
+            }
         });
 
         const tabs2 = new Tably("#tabs2", {
