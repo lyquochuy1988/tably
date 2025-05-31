@@ -48,7 +48,7 @@ Tably.prototype._init = function() {
     
     this.currentTab = tab;
     
-    this._activateTab(tab, false);
+    this._activateTab(tab, false, false);
 
     this.tabs.forEach(tab => {
         tab.onclick = (event) => this._handleClickTab(event, tab);
@@ -60,7 +60,7 @@ Tably.prototype._handleClickTab = function(event, tab) {
     this._tryActivateTab(tab);
 }
 
-Tably.prototype._activateTab = function(tab, triggerOnchange = true) {
+Tably.prototype._activateTab = function(tab, triggerOnchange = true, updateURL = this.opt.remember) {
     this.tabs.forEach(tab => {
         tab.closest("li").classList.remove(this.opt.activeClassName);
     });
@@ -71,7 +71,7 @@ Tably.prototype._activateTab = function(tab, triggerOnchange = true) {
     const activePanel = document.querySelector(tab.getAttribute("href"));
     activePanel.hidden = false;
 
-    if (this.opt.remember) {
+    if (updateURL) {
         const params = new URLSearchParams(location.search);
         const paramValue = tab.getAttribute("href").replace(this._cleanRegex, '');
 
@@ -98,7 +98,7 @@ Tably.prototype._tryActivateTab = function(tab) {
 Tably.prototype.switch = function(input) {   
     const tabToActivate = typeof input === 'string' ? this.tabs.find(tab => tab.getAttribute("href") === input) 
                             : this.tabs.includes(input) ? input : null;
-                            
+
     if (!tabToActivate) {
         console.error(`Not found tab from ${input}`);
         return;

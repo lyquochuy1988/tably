@@ -6,38 +6,97 @@
     <title>Tably</title>
     <link rel="stylesheet" href="./src/tably.css">      
     <style>
-        .tably--active a {
+        * {
+            margin: 0;
+            padding: 0;
+            /* box-sizing: border; */
+        }
+
+        .demo1 {
+            padding: 20px;
+            background-color: #666;
+        }
+
+        #tabs1 {
+            display: flex;
+        }
+
+        #tabs1 li {            
+            list-style: none;
+        }
+
+        #tabs1 li a {
+            display: inline-block;
+            text-decoration: none;
+            padding: 10px 20px;
+            background: #ccc;
+            border-bottom: 2px solid #ccc;
+        }
+
+        #tabs1 li.tably--active a {
+            background-color: #fff;
+            border-color: red;
+        }
+
+        .tably--active a {            
             color: red;
             font-weight: bold;
         }
+
+        .demo1 .panels {
+            padding: 20px;
+            background-color: #fff;
+        }
+
+        .demo2 {
+            padding: 20px;
+            display: flex;
+        }
+
+        .demo2 ul li {
+            list-style: none;
+        }
+
+        .demo2 .panels {
+            margin-left: 60px;
+        }
+        
     </style>
 </head>
 <body>
-    <!-- container -->
-    <ul id="tabs1">
-        <!-- Tabs -->
-        <li><a href="#tab1">Tab 1</a></li>
-        <li><a href="#tab2">Tab 2</a></li>
-        <li><a href="#tab3">Tab 3</a></li>
-    </ul>
+    <div class="demo1">
+        <!-- container -->
+        <ul id="tabs1">
+            <!-- Tabs -->
+            <li><a href="#tab1">Tab 1</a></li>
+            <li><a href="#tab2">Tab 2</a></li>
+            <li><a href="#tab3">Tab 3</a></li>
+        </ul>
 
-    <!-- Panels -->
-    <div id="tab1">Tab 1 content</div>
-    <div id="tab2">Tab 2 content</div>
-    <div id="tab3">Tab 3 content</div>
+        <!-- Panels -->
+        <div class="panels">
+            <div id="tab1">Tab 1 content</div>
+            <div id="tab2">Tab 2 content</div>
+            <div id="tab3">Tab 3 content</div>
+        </div>
+    </div>
 
-    <!-- container -->
-    <ul id="tabs2">
-        <!-- Tabs -->
-        <li><a href="#tabA">Tab A</a></li>
-        <li><a href="#tabB">Tab B</a></li>
-        <li><a href="#tabC">Tab C</a></li>
-    </ul>
+    <div class="demo2">
+        <!-- container -->
+        <ul id="tabs2">
+            <!-- Tabs -->
+            <li><a href="#tabA">Tab A</a></li>
+            <li><a href="#tabB">Tab B</a></li>
+            <li><a href="#tabC">Tab C</a></li>
+        </ul>
 
-    <!-- Panels -->
-    <div id="tabA">Tab A content</div>
-    <div id="tabB">Tab B content</div>
-    <div id="tabC">Tab C content</div>
+        <!-- Panels -->
+        <div class="panels">
+            <div id="tabA">Tab A content</div>
+            <div id="tabB">Tab B content</div>
+            <div id="tabC">Tab C content</div>
+        </div>
+    </div>
 
     <script src="./src/tably.js"></script>
     <script>
