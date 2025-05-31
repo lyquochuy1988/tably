@@ -39,8 +39,11 @@ Tably.prototype._init = function() {
     const params = new URLSearchParams(location.search);
     const tabSelector = params.get(this.paramKey);
 
-    const tabToActivate = (this.opt.remember && tabSelector && this.tabs.find(tab => tab.getAttribute("href").replace(/[^a-zA-Z0-9]/g, '') === tabSelector)) || this.tabs[0];
-    this._activateTab(tabToActivate)
+    const tab = (this.opt.remember && tabSelector && this.tabs.find(tab => tab.getAttribute("href").replace(/[^a-zA-Z0-9]/g, '') === tabSelector)) || this.tabs[0];
+    
+    this.currentTab = tab;
+    
+    this._activateTab(tab, false);
 
     this.tabs.forEach(tab => {
         tab.onclick = (event) => this._handleClickTab(event, tab);
@@ -49,10 +52,10 @@ Tably.prototype._init = function() {
 
 Tably.prototype._handleClickTab = function(event, tab) {
     event.preventDefault();
-    this._activateTab(tab);
+    this._tryActivateTab(tab);
 }
 
-Tably.prototype._activateTab = function(tab) {
+Tably.prototype._activateTab = function(tab, triggerOnchange = true) {
     this.tabs.forEach(tab => {
         tab.closest("li").classList.remove("tably--active");
     });
@@ -72,11 +75,18 @@ Tably.prototype._activateTab = function(tab) {
         history.replaceState(null, null, `?${params}`);
     }
 
-    if (typeof this.opt.onChange === 'function') {
+    if (triggerOnchange && typeof this.opt.onChange === 'function') {
         this.opt.onChange({
             tab,
             panel: activePanel
         });
+    }
+}
+
+Tably.prototype._tryActivateTab = function(tab) {
+    if (this.currentTab !== tab) {
+        this._activateTab(tab);
+        this.currentTab = tab;
     }
 }
 
@@ -98,7 +108,7 @@ Tably.prototype.switch = function(input) {
         return;
     }
 
-    this._activateTab(tabToActivate);
+    this._tryActivateTab(tabToActivate);
 }
 
 Tably.prototype.destroy = function() {
@@ -108,4 +118,5 @@ Tably.prototype.destroy = function() {
     this.container = null;
     this.tabs = null;
     this.panels = null;
+    this.currentTab = null;
 }
