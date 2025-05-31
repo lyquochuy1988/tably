@@ -90,8 +90,8 @@ Tably.prototype._activateTab = function(tab, triggerOnchange = true, updateURL =
 
 Tably.prototype._tryActivateTab = function(tab) {
     if (this.currentTab !== tab) {
-        this._activateTab(tab);
         this.currentTab = tab;
+        this._activateTab(tab);
     }
 }
 
