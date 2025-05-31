@@ -363,6 +363,7 @@ h3 {
 }
 
 .tabzy-tabs a {
+    font-weight: bold;
     text-decoration: none;
     color: #555;
     padding: 10px 20px;
