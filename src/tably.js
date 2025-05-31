@@ -12,7 +12,25 @@ function Tably(selector, options = {}) {
         return;
     }
 
-    this.panels = this.tabs.map(tab => {
+    this.panels = this.getPanels();
+
+    if (this.tabs.length !== this.panels.length) return;
+
+    this.opt = Object.assign({
+        activeClassName: "tably--active",
+        remember: false,
+        onChange: null,
+    }, options);
+
+    this._cleanRegex = /[^a-zA-Z0-9]/g;
+    this.paramKey = selector.replace(this._cleanRegex, '');
+    this._originalHTML = this.container.innerHTML;
+
+    this._init();
+}
+
+Tably.prototype.getPanels = function() {
+    return this.tabs.map(tab => {
         const panel = document.querySelector(tab.getAttribute("href"));        
         if (!panel) {
             console.error(`No panels found in tabs ${tab.getAttribute("href")}`);
@@ -20,26 +38,13 @@ function Tably(selector, options = {}) {
 
         return panel;
     }).filter(Boolean);
-
-    if (this.tabs.length !== this.panels.length) return;
-
-    this.opt = Object.assign({
-        remember: false,
-        onChange: null,
-    }, options);
-
-    this.paramKey = selector.replace(/[^a-zA-Z0-9]/g, '');;
-
-    this._originalHTML = this.container.innerHTML;
-
-    this._init();
 }
 
 Tably.prototype._init = function() {   
     const params = new URLSearchParams(location.search);
     const tabSelector = params.get(this.paramKey);
 
-    const tab = (this.opt.remember && tabSelector && this.tabs.find(tab => tab.getAttribute("href").replace(/[^a-zA-Z0-9]/g, '') === tabSelector)) || this.tabs[0];
+    const tab = (this.opt.remember && tabSelector && this.tabs.find(tab => tab.getAttribute("href").replace(this._cleanRegex, '') === tabSelector)) || this.tabs[0];
     
     this.currentTab = tab;
     
@@ -57,10 +62,10 @@ Tably.prototype._handleClickTab = function(event, tab) {
 
 Tably.prototype._activateTab = function(tab, triggerOnchange = true) {
     this.tabs.forEach(tab => {
-        tab.closest("li").classList.remove("tably--active");
+        tab.closest("li").classList.remove(this.opt.activeClassName);
     });
 
-    tab.closest("li").classList.add("tably--active");
+    tab.closest("li").classList.add(this.opt.activeClassName);
 
     this.panels.forEach(panel => panel.hidden = true);
     const activePanel = document.querySelector(tab.getAttribute("href"));
@@ -68,7 +73,7 @@ Tably.prototype._activateTab = function(tab, triggerOnchange = true) {
 
     if (this.opt.remember) {
         const params = new URLSearchParams(location.search);
-        const paramValue = tab.getAttribute("href").replace(/[^a-zA-Z0-9]/g, '');
+        const paramValue = tab.getAttribute("href").replace(this._cleanRegex, '');
 
         params.set(this.paramKey, paramValue);
 
@@ -90,19 +95,10 @@ Tably.prototype._tryActivateTab = function(tab) {
     }
 }
 
-Tably.prototype.switch = function(input) {
-    let tabToActivate = null;
-    if (typeof input === 'string') {
-        tabToActivate = this.tabs.find(tab => tab.getAttribute("href") === input);  
-
-        if (!tabToActivate) {
-            console.error(`Not found tab from input: ${input}`);
-            return;
-        }
-    } else if (this.tabs.includes(input)) {
-        tabToActivate = input;
-    }
-
+Tably.prototype.switch = function(input) {   
+    const tabToActivate = typeof input === 'string' ? this.tabs.find(tab => tab.getAttribute("href") === input) 
+                            : this.tabs.includes(input) ? input : null;
+                            
     if (!tabToActivate) {
         console.error(`Not found tab from ${input}`);
         return;
